@@ -1,1 +1,1 @@
-# Math-Seminar-Project
+Generates an ASCII representation of the convergence of the complex plane toward the roots of a polynomial. Use run.sh to generate a text file. The polynomial usind is z^3 - 1, but this can be changed by modifying the roots supplied to the grid() function in solver.py.
