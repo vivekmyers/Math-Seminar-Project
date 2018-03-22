@@ -49,12 +49,12 @@ def unity(n):
 roots = unity(3)
 image = {}
 
-for ((x, y), v) in grid(roots, 100, zoom=4).items():
+for ((x, y), v) in grid(roots, 200, zoom=4, iterations=32).items():
     if y not in image:
         image[y] = {}
     image[y][x] = v
 
 for (_, i) in sorted(image.items(), key=lambda p: -p[0]):
     for (_, j) in sorted(i.items(), key=lambda p: p[0]):
-        print({0: "|", 1: "#", 2: ".", 3: " ", 4: "$", 5: "="}[j], end=' ')
+        print(j, end=' ')
     print()
