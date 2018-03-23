@@ -1,11 +1,8 @@
 from functools import reduce
-from math import sqrt, exp
 from operator import mul
-from math import pi
-from cmath import exp
+from numpy import roots
+import sys
 
-
-# may take a few seconds to run
 
 def grid(roots, n, zoom=1, iterations=64):
     points = [(x / zoom, y / zoom) for x in range(-n, n + 1) for y in range(-n, n + 1)]
@@ -42,14 +39,20 @@ def polynomial(*roots):
     return lambda x: reduce(mul, (x - i for i in roots))
 
 
-def unity(n):
-    return [exp(complex(0, 1.0) * complex(z / n * 2 * pi, 0)) for z in range(n)]
+try:
+    coefficients = [float(c) for c in input('Coefficients: ').split()]
+    size = int(input('Grid Size: '))
+    zoom = float(input('Zoom Factor: '))
+    roots = roots(coefficients)
+    iterations = int(input('Iterations: '))
+except:
+    print('error')
+    exit()
 
-
-roots = unity(3)
 image = {}
+sys.stdout = open('output.txt', 'w')
 
-for ((x, y), v) in grid(roots, 800, zoom=8, iterations=16).items():
+for ((x, y), v) in grid(roots, size, zoom=zoom, iterations=iterations).items():
     if y not in image:
         image[y] = {}
     image[y][x] = v

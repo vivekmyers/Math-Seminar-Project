@@ -1,2 +1,2 @@
-python3 ./solver.py > output.txt
+python3 ./solver.py
 python3 ./render.py < output.txt

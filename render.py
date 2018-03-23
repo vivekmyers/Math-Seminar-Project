@@ -20,7 +20,6 @@ colors = {}
 
 image = zeros([len(grid), len(grid[0]), 3], dtype=uint8)
 for x in range(len(grid)):
-
     for y in range(len(grid[0])):
         symbol = grid[x][y]
         if symbol not in colors:
