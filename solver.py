@@ -49,7 +49,7 @@ def unity(n):
 roots = unity(3)
 image = {}
 
-for ((x, y), v) in grid(roots, 400, zoom=4, iterations=16).items():
+for ((x, y), v) in grid(roots, 800, zoom=8, iterations=16).items():
     if y not in image:
         image[y] = {}
     image[y][x] = v
