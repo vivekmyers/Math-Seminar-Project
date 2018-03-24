@@ -17,7 +17,6 @@ def new_color():
 
 
 colors = {}
-
 image = zeros([len(grid), len(grid[0]), 3], dtype=uint8)
 for x in range(len(grid)):
     for y in range(len(grid[0])):
