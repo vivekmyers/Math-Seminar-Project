@@ -2,8 +2,8 @@ import Data.Complex
 import Data.List
 import Data.Ord
 import Control.Monad
---import Control.Parallel.Strategies
---import Control.Deep
+import Control.Parallel.Strategies
+import Control.DeepSeq
 
 main = do
         c <- map read . words <$> getLine
@@ -29,6 +29,7 @@ solve x r eq der it = let nx = solve' x eq der it
         solve' x eq der it = let dx = if der x == 0 then x else eq x / der x
                              in solve' (x - dx) eq der $ pred it
 
+grid :: [Complex Double] -> Double -> Double -> Integer -> [((Double, Double), Int)]
 grid r n z i = let rn = (/z) <$> [(-n)..n]
                    grid = (,) <$> rn <*> rn
-               in (\z -> (,) z $ solve (uncurry (:+) z) r (poly r) (dif r) i) <$> grid
+               in parMap rdeepseq (\z -> (,) z $ solve (uncurry (:+) z) r (poly r) (dif r) i) grid
