@@ -3,9 +3,10 @@ from numpy import roots
 try:
     coefficients = [float(c) for c in input().split()]
     size = int(input())
-    zoom = float(input())
+    zoom = eval(input())
     roots = roots(coefficients)
     iterations = int(input())
+    tolerance = input()
 except:
     print('error')
     exit()
@@ -18,3 +19,4 @@ else:
 print(size)
 print(zoom)
 print(iterations)
+print(tolerance)
