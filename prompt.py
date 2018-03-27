@@ -6,7 +6,6 @@ try:
     zoom = eval(input())
     roots = roots(coefficients)
     iterations = int(input())
-    tolerance = input()
 except:
     print('error')
     exit()
@@ -19,4 +18,3 @@ else:
 print(size)
 print(zoom)
 print(iterations)
-print(tolerance)
