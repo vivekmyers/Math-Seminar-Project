@@ -22,7 +22,7 @@ dif r = foldr1 ((<*>) . fmap (+)) $ r >>=
 
 poly r = foldr1 ((<*>) . fmap (*)) (flip (-) <$> r)
 
-solve x r eq der it = maybe [0, it] id $ do
+solve x r eq der it = maybe [0, 0] id $ do
                         nx <- solve' x eq der it
                         let dr = (realPart . abs . subtract (fst nx)) <$> r
                         sequence [succ <$> elemIndex (minimum dr) dr, Just $ snd nx]
