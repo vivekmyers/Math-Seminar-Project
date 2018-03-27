@@ -1,19 +1,22 @@
 close() {
 	trap - SIGINT SIGTERM
-	echo Done
+	echo Exit
 	exit 1
 }
 trap close SIGINT SIGTERM
 
 printf "Coefficients: "
 read l1
-printf "Grid Size: "
-read l2
-l3="$l2"'/2.0'
-l4=64
+l2=600
+l3=1
+l4=128
 
-while getopts ":zi" opt; do
+while getopts ":gzi" opt; do
 	case "$opt" in
+	g)
+		printf "Grid Size: "
+		read l2
+		;;
 	z)
 		printf "Zoom Factor: "
 		read l3
@@ -25,6 +28,5 @@ while getopts ":zi" opt; do
 	esac
 done
 
-printf "%s\n" "$l1" "$l2" "$l3" "$l4" | python3 prompt.py | ./solver +RTS -N4 > output.txt
-python3 ./render.py < output.txt
+printf "%s\n" "$l1" "$l2" "$(($l2 * $l3 / 2))" "$l4" | python3 prompt.py | ./solver +RTS -N4 | python3 ./render.py
 echo Done
