@@ -1,3 +1,4 @@
+#!/bin/bash
 close() {
 	trap - SIGINT SIGTERM
 	echo Exit
