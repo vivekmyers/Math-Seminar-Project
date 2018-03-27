@@ -20,9 +20,10 @@ colors = {}
 image = zeros([len(grid), len(grid[0]), 3], dtype=uint8)
 for x in range(len(grid)):
     for y in range(len(grid[0])):
-        symbol = grid[x][y]
+        pixel = eval(grid[x][y])
+        symbol = pixel[0]
         if symbol not in colors:
             colors[symbol] = new_color()
-        image[x][y] = colors[symbol]
+        image[x][y] = [c * ((pixel[1] / float(sys.argv[1])) ** 2) for c in colors[symbol]]
 
 imsave("output.png", image)

@@ -22,17 +22,17 @@ dif r = foldr1 ((<*>) . fmap (+)) $ r >>=
 
 poly r = foldr1 ((<*>) . fmap (*)) (flip (-) <$> r)
 
-solve x r eq der it = maybe 0 succ $ do
+solve x r eq der it = maybe [0, it] id $ do
                         nx <- solve' x eq der it
-                        let dr = (realPart . abs . subtract nx) <$> r
-                        elemIndex (minimum dr) dr
+                        let dr = (realPart . abs . subtract (fst nx)) <$> r
+                        sequence [succ <$> elemIndex (minimum dr) dr, Just $ snd nx]
   where solve' x eq der 0 = Nothing
         solve' x eq der it = let dx = eq x / der x
                              in if (realPart . abs) dx < 1e-15
-                               then Just x
+                               then Just (x, fromIntegral it)
                                else solve' (x - dx) eq der $ pred it
 
-grid :: [Complex Double] -> Double -> Double -> Integer -> [((Double, Double), Int)]
+grid :: [Complex Double] -> Double -> Double -> Integer -> [((Double, Double), [Int])]
 grid r n z i = let rn = (/z) <$> [(-n)..n]
                    grid = (,) <$> rn <*> rn
                in parMap rdeepseq (\z -> (,) z $ solve (uncurry (:+) z) r (poly r) (dif r) i) grid

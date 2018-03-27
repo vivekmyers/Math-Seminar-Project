@@ -28,5 +28,5 @@ while getopts ":gzi" opt; do
 	esac
 done
 
-printf "%s\n" "$l1" "$l2" "$(($l2 * $l3 / 2))" "$l4" | python3 prompt.py | ./solver +RTS -N4 | python3 ./render.py
+printf "%s\n" "$l1" "$l2" "$(($l2 * $l3 / 2))" "$l4" | python3 prompt.py | ./solver +RTS -N4 | python3 ./render.py "$l4"
 echo Done
