@@ -20,7 +20,7 @@ try:
     image = zeros([len(grid), len(grid[0]), 3], dtype=uint8)
     for x in range(len(grid)):
         for y in range(len(grid[0])):
-            pixel = eval(grid[x][y])
+            pixel = [int(p) for p in grid[x][y][1:-1].split(',')]
             symbol = pixel[0]
             if symbol not in colors:
                 colors[symbol] = new_color()
