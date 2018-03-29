@@ -2,8 +2,6 @@ import Data.Complex
 import Data.List
 import Data.Ord
 import Control.Monad
-import Control.Parallel.Strategies
-import Control.DeepSeq
 
 main = do
         c <- map read . words <$> getLine
@@ -35,4 +33,4 @@ solve x r eq der it = maybe [0, 0] id $ do
 grid :: [Complex Double] -> Double -> Double -> Integer -> [((Double, Double), [Int])]
 grid r n z i = let rn = (/z) <$> [(-n)..n]
                    grid = (,) <$> rn <*> rn
-               in parMap rdeepseq (\z -> (,) z $ solve (uncurry (:+) z) r (poly r) (dif r) i) grid
+               in map (\z -> (,) z $ solve (uncurry (:+) z) r (poly r) (dif r) i) grid

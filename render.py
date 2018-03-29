@@ -24,7 +24,7 @@ try:
             symbol = pixel[0]
             if symbol not in colors:
                 colors[symbol] = new_color()
-            image[x][y] = [c * ((pixel[1] / float(sys.argv[1])) ** 2) for c in colors[symbol]]
+            image[x][y] = [c * ((pixel[1] / float(sys.argv[1])) ** float(sys.argv[2])) for c in colors[symbol]]
 
     imsave("output.png", image)
 except:
