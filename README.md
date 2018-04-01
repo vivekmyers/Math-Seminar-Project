@@ -6,4 +6,4 @@ Ex.
 
 Coefficients: 1 0 0 -1
 
-Requires python3, numpy, scipy, and Pillow.
+Requires python3, scipy, and Pillow.
