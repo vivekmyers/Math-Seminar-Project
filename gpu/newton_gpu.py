@@ -35,6 +35,7 @@ size_imag = c_float(float(input("imaginary range: ")))
 
 tolerance = c_float(float(input("tolerance: ")))
 max_iterations = c_int(int(input("max iterations: ")))
+samples = int(input("supersampling: "))
 
 pygame.init()
 pygame.display.set_mode((WINDOW_WIDTH,WINDOW_HEIGHT),pygame.OPENGL|pygame.DOUBLEBUF)
@@ -89,8 +90,6 @@ glClearColor(0.0, 0.0, 0.0, 1.0)
 glClear(GL_COLOR_BUFFER_BIT)
 glBindTexture(GL_TEXTURE_1D, palette_texture)
 
-samples = 4
-
 glUniform2f(0, min_real,min_imag)#bottom_right
 glUniform2f(1, size_real,size_imag)#view_size
 glUniform1i(2, max_iterations)#iterations
@@ -98,7 +97,7 @@ glUniform1f(3, tolerance)#tolerance
 glUniform1i(4, num_roots)#root_count
 glUniform1i(5, 0)#root_colors
 glUniform1f(6, 1.0/samples/samples)#color_scaling
-glUniform2fv(8,3,byref(roots))#roots
+glUniform2fv(8,num_roots,byref(roots))#roots
 
 glEnable(GL_BLEND)
 glBlendFunc(GL_ONE, GL_ONE)
