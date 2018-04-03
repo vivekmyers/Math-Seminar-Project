@@ -7,3 +7,11 @@ Ex.
 Coefficients: 1 0 0 -1
 
 Requires python3, numpy, scipy, and Pillow.
+
+## GPU
+
+Requires pygame and PyOpenGL.
+
+Does not create images yet.
+
+`python newton_gpu.py`
