@@ -33,4 +33,4 @@ Example:
     imaginary range: 4
     tolerance: 0.0000000001
     max iterations: 200
-    supersampling: 3`
+    supersampling: 3
