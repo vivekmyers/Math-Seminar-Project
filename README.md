@@ -19,4 +19,18 @@ Requires pygame and PyOpenGL.
 
 Does not create images yet.
 
-`python newton_gpu.py`
+Example:
+
+    python newton_gpu.py
+
+    number of roots: 3
+    root 1: -1 -1
+    root 2: -1 1
+    root 3: 1 0
+    minimum real: -2
+    minimum imaginary: -2
+    real range: 4
+    imaginary range: 4
+    tolerance: 0.0000000001
+    max iterations: 200
+    supersampling: 3
