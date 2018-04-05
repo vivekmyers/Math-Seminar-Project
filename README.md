@@ -10,7 +10,7 @@ Ex.
 Requires bash, python3, numpy, scipy, and Pillow.
 
 ## C++ Version
-Generates a bmp representation of the Newton-Raphson convergence of the complex plane toward the roots of a polynomial. Use generator to generate the image file, output.png (may take several minutes). The -g, -z, -i, and -c options can be used to specify grid size, zoom, iterations, and contrast, respectively.
+Generates a bmp representation of the Newton-Raphson convergence of the complex plane toward the roots of a polynomial. Use generator to generate the image file, output.png (relatively fast). The -g, -z, -i, and -c options can be used to specify grid size, zoom, iterations, and contrast, respectively.
 
 Ex.
 

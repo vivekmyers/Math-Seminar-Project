@@ -9,6 +9,7 @@
 #include <map>
 #include <cstdlib>
 #include <getopt.h>
+#include <thread>
 #include "fractals.h"
 
 using namespace std;
@@ -54,17 +55,33 @@ int main(int argc, char *const *argv) {
     z = n * z / 2;
     polynomial eq(coef);
     auto der = eq.dif();
-    vector<vector<pair<complex<double>, int> > > grid;
-    for (double i = -n; i <= n; i++) {
-        vector<pair<complex<double>, int> > row;
-        for (double j = -n; j <= n; j++) {
-            complex<double> num(i / z, j / z);
-            auto v = solve(num, eq, der, it);
-            double precision = 1e10;
-            row.push_back(make_pair(complex<double>(round(v.first.real() * precision) / precision, round(v.first.imag() * precision) / precision), v.second));
+    vector<vector<pair<complex<double>, int> > > grid(2 * n + 1);
+    thread t1([eq, der, &grid, n, it, z]() {
+        for (double i = -n; i <= 0; i++) {
+            vector<pair<complex<double>, int> > row(2 * n + 1);
+            for (double j = -n; j < n; j++) {
+                complex<double> num(i / z, j / z);
+                auto v = solve(num, eq, der, it);
+                double precision = 1e10;
+                row[j + n] = (make_pair(complex<double>(round(v.first.real() * precision) / precision, round(v.first.imag() * precision) / precision), v.second));
+            }
+            grid[i + n] = row;
         }
-        grid.push_back(row);
-    }
+    });
+    thread t2([eq, der, &grid, n, it, z]() {
+        for (double i = 0; i <= n; i++) {
+            vector<pair<complex<double>, int> > row(2 * n + 1);
+            for (double j = -n; j <= n; j++) {
+                complex<double> num(i / z, j / z);
+                auto v = solve(num, eq, der, it);
+                double precision = 1e10;
+                row[j + n] = (make_pair(complex<double>(round(v.first.real() * precision) / precision, round(v.first.imag() * precision) / precision), v.second));
+            }
+            grid[i + n] = row;
+        }
+    });
+    t1.join();
+    t2.join();
     image(grid, it, c);
     return 0;
 }
