@@ -26,4 +26,16 @@ Checkout the python branch (very slow).
 
 Requires [GLFW](http://www.glfw.org/) and [GLEW](http://glew.sourceforge.net/).
 
+Example:
+
+    number of roots (max 10): 3
+    root 1: -1 1
+    root 2: 1 1
+    root 3: 0 -1
+    real range: -2 2
+    imaginary range: -2 2
+    tolerance: 0.0000001
+    max iterations: 100
+    supersampling: 3
+
 I have a VS project for Windows if anyone wants it.

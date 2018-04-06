@@ -88,6 +88,26 @@ GLuint load_shader_from_file(const char *path, GLenum shader_type)
 
 int main()
 {
+  int num_roots, samples, iterations;
+  GLfloat real_min, real_max, imag_min, imag_max, tolerance;
+  printf("number of roots (max 10): ");
+  scanf("%d", &num_roots);
+  GLfloat *roots = new GLfloat[num_roots * 2];
+  for (int i = 0; i < num_roots; ++i) {
+    printf("root %d: ", i + 1);
+    scanf("%f %f", roots + 2*i, roots + 2*i + 1);
+  }
+  printf("real range: ");
+  scanf("%f %f", &real_min, &real_max);
+  printf("imaginary range: ");
+  scanf("%f %f", &imag_min, &imag_max);
+  printf("tolerance: ");
+  scanf("%f", &tolerance);
+  printf("max iterations: ");
+  scanf("%d", &iterations);
+  printf("supersampling: ");
+  scanf("%d", &samples);
+
   if (!glfwInit()) {
     printf("GLFW initialization failed\n");
   }
@@ -167,21 +187,16 @@ int main()
   glClear(GL_COLOR_BUFFER_BIT);
   glBindTexture(GL_TEXTURE_1D, palette_texture);
 
-  const int samples = 4;
 
-  glUniform2f(0, -2.f,-2.f);//bottom_right
-  glUniform2f(1, 4.f,4.f);//view_size
-  glUniform1i(2, 500);//iterations
-  glUniform1f(3, 1e-4);//tolerance
-  glUniform1i(4, 3);//root_count
+  glUniform2f(0, real_min, imag_min);//bottom_right
+  glUniform2f(1, real_max - real_min, imag_max - imag_min);//view_size
+  glUniform1i(2, iterations);//iterations
+  glUniform1f(3, tolerance);//tolerance
+  glUniform1i(4, num_roots);//root_count
   glUniform1i(5, 0);//root_colors
   glUniform1f(6, 1.f/samples/samples);//color_scaling
-  GLfloat roots[6] = {
-    1.f, 0.5f,
-    0.7f, -0.7f,
-    0.f, 0.5f,
-  };
-  glUniform2fv(8,3,roots);//roots
+  glUniform2fv(8, num_roots, roots);//roots
+  delete[] roots;
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_ONE, GL_ONE);
