@@ -24,22 +24,6 @@ Checkout the python branch (very slow).
 
 ## GPU
 
-Requires pygame and PyOpenGL.
+Requires [GLFW](http://www.glfw.org/) and [GLEW](http://glew.sourceforge.net/).
 
-Does not create images yet.
-
-Example:
-
-    python newton_gpu.py
-
-    number of roots: 3
-    root 1: -1 -1
-    root 2: -1 1
-    root 3: 1 0
-    minimum real: -2
-    minimum imaginary: -2
-    real range: 4
-    imaginary range: 4
-    tolerance: 0.0000000001
-    max iterations: 200
-    supersampling: 3
+I have a VS project for Windows if anyone wants it.
