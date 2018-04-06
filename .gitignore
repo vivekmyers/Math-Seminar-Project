@@ -2,3 +2,7 @@ output.txt
 output.png
 solver.hi
 solver.o
+gpu/.vs
+gpu/*.dll
+gpu/gpu.*
+gpu/x64
