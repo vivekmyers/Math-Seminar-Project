@@ -6,3 +6,4 @@ gpu/.vs
 gpu/*.dll
 gpu/gpu.*
 gpu/x64
+output.bmp
