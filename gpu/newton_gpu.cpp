@@ -4,7 +4,6 @@
 #include <GLFW/glfw3.h>
 
 #include <cstdio>
-#include <cctype>
 #include <fstream>
 
 const int WINDOW_WIDTH = 900;
