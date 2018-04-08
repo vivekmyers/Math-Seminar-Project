@@ -8,6 +8,7 @@ Ex.
 `Coefficients: 1 0 0 -1`
 
 Requires bash, python3, numpy, scipy, and Pillow.
+Requires ghc to build (`make solver`).
 
 ## C++ Version
 Generates a bmp representation of the Newton-Raphson convergence of the complex plane toward the roots of a polynomial. Use generator to generate the image file, output.png (relatively fast). The -g, -z, -i, and -c options can be used to specify grid size, zoom, iterations, and contrast, respectively.
@@ -18,9 +19,7 @@ Ex.
 
 `Coefficients: 1 0 0 -1`
 
-## Python Version
-
-Checkout the python branch (very slow).
+Requires clang++ to build (`make generator`).
 
 ## GPU
 
@@ -39,3 +38,21 @@ Example:
     supersampling: 3
 
 I have a VS project for Windows if anyone wants it.
+
+## Haskell Winding Method Visualization
+Generates a png representation of a function's roots using the color wheel (winding.png).
+
+Ex.
+
+`./winding`
+
+`Coefficients: 1 0 0 -1`
+
+`Window: 5`
+
+Requires stack and HIP to build (`make winding`).
+
+## Python Version
+
+Checkout the python branch (very slow).
+

@@ -5,7 +5,6 @@
 #include <complex>
 #include <utility>
 #include <cmath>
-#include <cmath>
 #include <map>
 #include <cstdlib>
 #include <getopt.h>
