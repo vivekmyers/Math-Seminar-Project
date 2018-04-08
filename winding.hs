@@ -1,4 +1,3 @@
-import Data.Array
 import Data.Fixed
 import Data.Complex
 import System.IO

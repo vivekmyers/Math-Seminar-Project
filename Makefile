@@ -7,7 +7,7 @@ solver: solver.hs
 	-ghc -threaded --make -O2 solver.hs
 
 winding: winding.hs
-	-stack ghc winding.hs -- -O2 -threaded
+	-stack ghc winding.hs -- -O2 -threaded -with-rtsopts=-N
 
 clean:
 	-@rm -f *.o 
