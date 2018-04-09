@@ -18,7 +18,7 @@ void glfw_debug_callback(int error, const char *description)
 
 void gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *user_param)
 {
-  char *msg_type;
+  const char *msg_type;
   switch (type) {
   case GL_DEBUG_TYPE_ERROR:
     msg_type = "Error";
