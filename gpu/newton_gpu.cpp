@@ -16,32 +16,6 @@ void glfw_debug_callback(int error, const char *description)
   printf("[GLFW] %d: %s\n", error, description);
 }
 
-void gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *user_param)
-{
-  const char *msg_type;
-  switch (type) {
-  case GL_DEBUG_TYPE_ERROR:
-    msg_type = "Error";
-    break;
-  case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-    msg_type = "Deprecated";
-    break;
-  case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-    msg_type = "Undefined";
-    break;
-  case GL_DEBUG_TYPE_PORTABILITY:
-    msg_type = "Portability";
-    break;
-  case GL_DEBUG_TYPE_PERFORMANCE:
-    msg_type = "Performance";
-    break;
-  default:
-    msg_type = "Other";
-    break;
-  }
-  printf("[GL/%s] %s\n", msg_type, message);
-}
-
 GLuint load_shader_from_file(const char *path, GLenum shader_type)
 {
   char *buffer;
@@ -125,9 +99,6 @@ int main()
     printf("GLEW initialization failed: %s\n", glewGetErrorString(glew_error));
   }
 
-  glEnable(GL_DEBUG_OUTPUT);
-  glDebugMessageCallback((GLDEBUGPROC) gl_debug_callback, 0);
-
   GLubyte palette_data[10*3] = {
     0xff, 0x00, 0x00,
     0x00, 0xff, 0x00,
@@ -146,8 +117,7 @@ int main()
   glBindTexture(GL_TEXTURE_1D, palette_texture);
   glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexStorage1D(GL_TEXTURE_1D, 1, GL_RGB8, 256);
-  glTexSubImage1D(GL_TEXTURE_1D, 0, 0, palette_size, GL_RGB, GL_UNSIGNED_BYTE, &palette_data);
+  glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB8, palette_size, 0, GL_RGB, GL_UNSIGNED_BYTE, &palette_data);
   glBindTexture(GL_TEXTURE_1D, 0);
 
   GLuint vertex_shader, fragment_shader;
