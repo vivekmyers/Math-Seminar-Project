@@ -39,6 +39,17 @@ Example:
 
 I have a VS project for Windows if anyone wants it.
 
+## Root Solver
+Finds the roots of a polynomial by the winding method.
+
+Ex.
+
+`./roots`
+
+`Coefficients: 1 0 0 -1`
+
+Requires ghc to build (`make roots`).
+
 ## Haskell Winding Method Visualization
 Generates a png representation of a function's roots using the color wheel (winding.png).
 
