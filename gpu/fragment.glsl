@@ -1,16 +1,16 @@
-#version 460
+#version 130
 
-layout(location = 0) uniform vec2 bottom_right;
-layout(location = 1) uniform vec2 view_size;
+uniform vec2 bottom_right;
+uniform vec2 view_size;
 
-layout(location = 2) uniform int max_iterations;
-layout(location = 3) uniform float tolerance;
+uniform int max_iterations;
+uniform float tolerance;
 
-layout(location = 4) uniform int root_count;
-layout(location = 5) uniform sampler1D root_colors;
-layout(location = 6) uniform float color_scaling;
-layout(location = 7) uniform vec2 offset;
-layout(location = 8) uniform vec2 roots[16];
+uniform int root_count;
+uniform sampler1D root_colors;
+uniform float color_scaling;
+uniform vec2 offset;
+uniform vec2 roots[16];
 
 in vec2 texture_coord;
 out vec4 color;

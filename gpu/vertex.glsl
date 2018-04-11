@@ -1,4 +1,4 @@
-#version 460
+#version 130
 
 vec2 vertices[4] = vec2[](
   vec2(0.f, 0.f),

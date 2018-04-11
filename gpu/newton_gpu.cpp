@@ -11,6 +11,8 @@ const int WINDOW_HEIGHT = 900;
 
 const char *WINDOW_TITLE = "Newton GPU";
 
+#define GETUNIFORM(NAME) GLint NAME ## _loc = glGetUniformLocation(program, #NAME)
+
 void glfw_debug_callback(int error, const char *description)
 {
   printf("[GLFW] %d: %s\n", error, description);
@@ -103,13 +105,13 @@ int main()
     0xff, 0x00, 0x00,
     0x00, 0xff, 0x00,
     0x00, 0x00, 0xff,
-	0xff, 0xff, 0x00,
-	0x00, 0xff, 0xff,
-	0xff, 0x00, 0xff,
-	0xff, 0x80, 0x00,
-	0x00, 0xff, 0x80,
-	0x80, 0x00, 0xff,
-	0xbb, 0xbb, 0xbb,
+    0xff, 0xff, 0x00,
+    0x00, 0xff, 0xff,
+    0xff, 0x00, 0xff,
+    0xff, 0x80, 0x00,
+    0x00, 0xff, 0x80,
+    0x80, 0x00, 0xff,
+    0xbb, 0xbb, 0xbb,
   };
   unsigned char palette_size = 10;
   GLuint palette_texture;
@@ -159,26 +161,37 @@ int main()
 
   glUseProgram(program);
 
+
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   glBindTexture(GL_TEXTURE_1D, palette_texture);
 
+  GETUNIFORM(bottom_right);
+  GETUNIFORM(view_size);
+  GETUNIFORM(max_iterations);
+  GETUNIFORM(tolerance);
+  GETUNIFORM(root_count);
+  GETUNIFORM(root_colors);
+  GETUNIFORM(color_scaling);
+  GETUNIFORM(roots);
+  GETUNIFORM(offset);
 
-  glUniform2f(0, real_min, imag_min);//bottom_right
-  glUniform2f(1, real_max - real_min, imag_max - imag_min);//view_size
-  glUniform1i(2, iterations);//iterations
-  glUniform1f(3, tolerance);//tolerance
-  glUniform1i(4, num_roots);//root_count
-  glUniform1i(5, 0);//root_colors
-  glUniform1f(6, 1.f/samples/samples);//color_scaling
-  glUniform2fv(8, num_roots, roots);//roots
+  glUniform2f(bottom_right_loc, real_min, imag_min);
+  glUniform2f(view_size_loc, real_max - real_min, imag_max - imag_min);
+  glUniform1i(max_iterations_loc, iterations);
+  glUniform1f(tolerance_loc, tolerance);
+  glUniform1i(root_count_loc, num_roots);
+  glUniform1i(root_colors_loc, 0);
+  glUniform1f(color_scaling_loc, 1.f/samples/samples);
+  glUniform2fv(roots_loc, num_roots, roots);
   delete[] roots;
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_ONE, GL_ONE);
   for (int x = 0; x < samples; ++x) {
     for (int y = 0; y < samples; ++y) {
-      glUniform2f(7, 2.f*x/WINDOW_WIDTH/samples - 1.f/WINDOW_WIDTH, 2.f*y/WINDOW_HEIGHT/samples - 1.f/WINDOW_HEIGHT);//offset
+      glUniform2f(offset_loc, 2.f*x/WINDOW_WIDTH/samples - 1.f/WINDOW_WIDTH,
+		      2.f*y/WINDOW_HEIGHT/samples - 1.f/WINDOW_HEIGHT);
       glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     }
   }
