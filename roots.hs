@@ -5,8 +5,12 @@ import Text.Printf
 
 main = do putStr  "Coefficients: "
           hFlush stdout
-          func <- poly . map ((:+ 0) . read) . words <$> getLine
+          func <- poly . map parse . words <$> getLine
           mapM_ (putStrLn . display) (solve func (2 ^ 60))
+
+parse :: String -> Complex Double
+parse s | any (isPrefixOf ":+") (tails s)  = read s
+        | otherwise = read s :+ 0
 
 display :: Complex Double -> String
 display (a :+ b) = case b of
