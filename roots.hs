@@ -21,17 +21,17 @@ poly [r] _ = r
 poly (r:rs:rss) x = poly ((r * x + rs):rss) x
 
 solve :: (Complex Double -> Complex Double) -> Double -> [Complex Double]
-solve f n = nub $ fmap (process 1e6) <$> solve' f ((-n) :+ n) n
-  where solve' f pt n | box f pt (2 * n) == 0 = []
-                      | n < 2e-7  = [pt]
-                      | otherwise = let (p1, p2, p3, p4) = (pt, pt + (n :+ 0), pt + (n :+ (-n)), pt + (0 :+ (-n)))
-                                    in concat [solve' f p1 (n / 2), solve' f p2 (n / 2), solve' f p3 (n / 2), solve' f p4 (n / 2)]
-
+solve f n = nub $ fmap (process 1e5) <$> solve' f ((-n) :+ n) n True
+  where solve' f pt n b | box f pt (2 * n) == 0 && b = []
+                        | n < 2e-8  = [pt]
+                        | otherwise = let points = [pt, pt + (n :+ 0), pt + (n :+ (-n)), pt + (0 :+ (-n))]
+                                          next = concat $ [solve'] <*> [f] <*> points <*> [n / 2] <*> [True]
+                                      in if all null next then solve' f (head points) (n / 2) False else next
 process :: Double -> Double -> Double
 process t n = fromIntegral (round (n * t)) / t
 
 box :: (Complex Double -> Complex Double) -> Complex Double -> Double -> Double
-box f pt n = process 1e2 . sum . map (uncurry $ winding f) $ zip <*> tail $ points
+box f pt n = process 1e5 . sum . map (uncurry $ winding f) $ zip <*> tail $ points
   where points = [pt, pt + (n :+ 0), pt + (n :+ (-n)), pt + (0 :+ (-n)), pt]
 
 winding :: (Complex Double -> Complex Double) -> Complex Double -> Complex Double -> Double
