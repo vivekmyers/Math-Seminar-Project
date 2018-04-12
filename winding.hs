@@ -2,16 +2,33 @@ import Data.Fixed
 import Data.Complex
 import System.IO
 import Graphics.Image hiding (map)
+import Data.List
 
 main = do putStr "Coefficients: "
           hFlush stdout
-          func <- poly . map ((:+ 0) . read) . words <$> getLine
+          func <- poly . map parse . words <$> getLine
           putStr "Window: "
           hFlush stdout
           size <- readLn
           let res = 1200 :: Double
           let result = makeImageR VU (floor res,  floor res) (solve func res (res / size)) :: Image VU RGB Double
           writeImage "winding.png" result
+
+parse :: String -> Complex Double
+parse s = case groupBy split s of
+            ["-", "i"] -> 0 :+ (-1)
+            ["+", "i"] -> 0 :+ 1
+            [a, "+", "i"] -> read' a :+ 1
+            [a, "-", "i"] -> read' a :+ (-1)
+            ["i"] -> 0 :+ 1
+            [a, b, "i"] -> read' a :+ read' b
+            [b, "i"] -> 0 :+ read' b
+            [a] -> read' a :+ 0
+            _ -> error "Invalid Input"
+  where split a b = let r = '.':['0'..'9']
+                    in elem a ('+':'-':r) && elem b r
+        read' ('+':s) = read' s
+        read' s = read s
 
 poly :: [Complex Double] -> Complex Double -> Complex Double
 poly [] _ = 0
