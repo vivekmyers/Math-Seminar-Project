@@ -3,12 +3,13 @@ import System.IO
 import Data.List
 import Text.Printf
 import Control.Exception
+import Control.Arrow
 
 main = handle invalid $ do
          putStr  "Coefficients: "
          hFlush stdout
-         func <- poly . map parse . words <$> getLine
-         mapM_ (putStrLn . display) (solve func (2 ^ 60))
+         (func, dfunc) <- (poly &&& dif) . map parse . words <$> getLine
+         mapM_ (putStrLn . display) (solve func dfunc (2 ^ 80))
   where invalid = const $ putStrLn "Invalid Input" :: SomeException -> IO ()
 
 parse :: String -> Complex Double
@@ -34,27 +35,36 @@ display (a :+ b) = case b of
                       0 -> printf "%f" b ++ "i"
                       _ -> printf "%f" a ++ (if b < 0 then "-" else "+") ++ printf "%f" (abs b) ++ "i"
 
+type CFunc = Complex Double -> Complex Double
+
 poly :: [Complex Double] -> Complex Double -> Complex Double
 poly [] _ = 0
 poly [r] _ = r
 poly (r:rs:rss) x = poly ((r * x + rs):rss) x
 
-solve :: (Complex Double -> Complex Double) -> Double -> [Complex Double]
-solve f n = nub $ fmap (process 1e5) <$> filter (\x -> (realPart . abs) (f x) < 1e-3) (solve' f ((-n) :+ n) n True)
-  where solve' f pt n b | box f pt (2 * n) == 0 && b = []
-                        | n < 2e-8  = [pt]
-                        | otherwise = let points = [pt, pt + (n :+ 0), pt + (n :+ (-n)), pt + (0 :+ (-n))]
-                                          next = concat $ [solve'] <*> [f] <*> points <*> [n / 2] <*> [True]
-                                      in if all null next then solve' f (head points) (n / 2) False else next
+dif r = poly $ zipWith (*) (init r) $ fromIntegral <$> iterate pred (length r - 1)
+
+solve :: CFunc -> CFunc -> Double -> [Complex Double]
+solve f df n = nub $ fmap (process 1e5) <$> solve' f ((-n) :+ n) n 
+  where solve' f pt n | box f pt (2 * n) == 0 = []
+                      | n < 1e-4  = [newton pt f df 1024]
+                      | otherwise = let points = [pt, pt + (n :+ 0), pt + (n :+ (-n)), pt + (0 :+ (-n))]
+                                    in  concat $ [solve'] <*> [f] <*> points <*> [n / 2]
+
+newton :: Complex Double -> CFunc -> CFunc -> Integer -> Complex Double
+newton x eq der it | it == 0 = x
+                   | (a :+ 0) <- abs dx, a < 1e-15 = x
+                   | otherwise = newton (x - dx) eq der $ pred it
+  where dx = eq x / der x
 
 process :: Double -> Double -> Double
 process t n = fromIntegral (round (n * t)) / t
 
-box :: (Complex Double -> Complex Double) -> Complex Double -> Double -> Double
+box :: CFunc -> Complex Double -> Double -> Double
 box f pt n = process 1e5 . sum . map (uncurry $ winding f) $ zip <*> tail $ points
   where points = [pt, pt + (n :+ 0), pt + (n :+ (-n)), pt + (0 :+ (-n)), pt]
 
-winding :: (Complex Double -> Complex Double) -> Complex Double -> Complex Double -> Double
+winding :: CFunc -> Complex Double -> Complex Double -> Double
 winding f p1 p2 = sum angles / (2 * pi)
   where iter = 128
         points = take (iter + 1) . iterate (subtract $ (p2 - p1) / fromIntegral iter) $ p2
