@@ -13,6 +13,9 @@
 
 using namespace std;
 
+/**
+    Prompts for coefficients in polynomial. Flags can be provided to specify extra parameters.
+*/
 int main(int argc, char *const *argv) {
     string in;
     cout << "Coefficients: ";
