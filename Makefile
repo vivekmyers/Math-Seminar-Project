@@ -1,4 +1,4 @@
-all: solver generator winding roots clean
+all: solver generator winding roots clean boxes
 
 generator: fractals.cpp fractals.h
 	-clang++ -std=c++11 -O2 fractals.cpp -o generator
@@ -11,6 +11,9 @@ winding: winding.hs
 
 roots: roots.hs
 	-ghc -threaded -O2 -with-rtsopts=-N roots.hs
+
+boxes: boxes.hs
+	-ghc -threaded -O2 -with-rtsopts=-N boxes.hs
 
 clean:
 	-@rm -f *.o 

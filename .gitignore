@@ -8,3 +8,4 @@ gpu/gpu.*
 gpu/x64
 output.bmp
 winding.png
+boxes.js

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="boxes.js" id="t"></script>
+    <script>
+        const redraw = () => {
+            const can = document.getElementById("canvas");
+            const ctx = can.getContext('2d');
+            const szw = window.innerWidth;
+            const szh = window.innerHeight;
+            can.width = szw;
+            can.height = szh;
+            const i = document.getElementById("winding");
+            ctx.drawImage(i, 0, 0, szw, szh);
+            eval(t).forEach(i => {
+                console.log(i);
+                if (i[4]) {
+                    ctx.lineWidth = 0.2;
+                    ctx.strokeStyle = "black";
+                    const p = [i[0].x * szw / 4 + szw / 2, i[0].y * szh / 4 + szh / 2,
+                        (i[1].x - i[0].x) * szw / 4, (i[3].y - i[0].y) * szh / 4];
+                    ctx.strokeRect.apply(ctx, p);
+                }
+            });
+            eval(t).forEach(i => {
+                console.log(i);
+                if (!i[4]) {
+                    ctx.lineWidth = 3;
+                    ctx.strokeStyle = "black";
+                    const p = [i[0].x * szw / 4 + szw / 2, i[0].y * szh / 4 + szh / 2,
+                        (i[1].x - i[0].x) * szw / 4, (i[3].y - i[0].y) * szh / 4];
+                    ctx.strokeRect.apply(ctx, p);
+                }
+            });
+        };
+        window.onresize = redraw;
+        window.onload = redraw;
+    </script>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<img src="winding.png" id="winding" style="visibility: hidden;"/>
+</body>
+</html>
