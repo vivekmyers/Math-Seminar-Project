@@ -15,8 +15,9 @@
             eval(t).forEach(i => {
                 console.log(i);
                 if (i[4]) {
-                    ctx.lineWidth = 0.2;
+                    ctx.lineWidth = 1;
                     ctx.strokeStyle = "black";
+                    ctx.globalAlpha = 0.2;
                     const p = [i[0].x * szw / 4 + szw / 2, i[0].y * szh / 4 + szh / 2,
                         (i[1].x - i[0].x) * szw / 4, (i[3].y - i[0].y) * szh / 4];
                     ctx.strokeRect.apply(ctx, p);
@@ -25,8 +26,9 @@
             eval(t).forEach(i => {
                 console.log(i);
                 if (!i[4]) {
-                    ctx.lineWidth = 3;
+                    ctx.lineWidth = 2;
                     ctx.strokeStyle = "black";
+                    ctx.globalAlpha = 1;
                     const p = [i[0].x * szw / 4 + szw / 2, i[0].y * szh / 4 + szh / 2,
                         (i[1].x - i[0].x) * szw / 4, (i[3].y - i[0].y) * szh / 4];
                     ctx.strokeRect.apply(ctx, p);
