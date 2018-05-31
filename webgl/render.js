@@ -5,7 +5,7 @@ size = 800;
 seedval = Math.random();
 centerx = 0;
 centery = 0;
-equation = [1, 0, 0, -1];
+equation = prompt('Coefficients: ').split(' ').map(x => parseInt(x, 10));
 
 function get(f) {
     const x = new XMLHttpRequest();
