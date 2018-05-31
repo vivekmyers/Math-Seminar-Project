@@ -1,6 +1,6 @@
 window.onload = main;
 
-scale = 1;
+scale = 2;
 size = 800;
 seedval = Math.random();
 centerx = 0;
@@ -97,7 +97,6 @@ function redraw(cx, cy, scale) {
     ctx.uniform1f(cyl, cy);
     const scalel = ctx.getUniformLocation(program, "scale");
     ctx.uniform1f(scalel, scale);
-    const offset = 0;
     const vertexCount = 4;
     ctx.drawArrays(ctx.TRIANGLE_STRIP, offset, vertexCount);
 }
