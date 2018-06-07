@@ -1,5 +1,3 @@
-window.onload = main;
-
 scale = 2;
 size = 800;
 seedval = Math.random();
@@ -7,14 +5,7 @@ centerx = 0;
 centery = 0;
 equation = prompt('Coefficients: ').split(' ').map(x => parseInt(x, 10));
 
-function click(e) {
-    var rect = this.getBoundingClientRect();
-    centerx += (e.clientX - rect.left - size / 2) / (size / 2) * scale;
-    centery += -(e.clientY - rect.top - size / 2) / (size / 2) * scale;
-    redraw(centerx, centery, scale /= 2);
-}
-
-function main() {
+window.onload = function () {
     const canvas = document.getElementById('canvas');
     canvas.width = size * 1.5;
     canvas.height = size * 1.5;
@@ -25,7 +16,12 @@ function main() {
         alert('Unable to initialize WebGL.');
         return;
     }
-    canvas.addEventListener('click', click.bind(canvas), false);
+    canvas.addEventListener('click', function (e) {
+        var rect = canvas.getBoundingClientRect();
+        centerx += (e.clientX - rect.left - size / 2) / (size / 2) * scale;
+        centery += -(e.clientY - rect.top - size / 2) / (size / 2) * scale;
+        redraw(centerx, centery, scale /= 2);
+    }, false);
 
     const vertex = compile(ctx, ctx.VERTEX_SHADER, `
 precision highp float;
