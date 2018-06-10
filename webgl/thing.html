@@ -5,17 +5,69 @@
   </head>
   <body>
     <script src="thing.js"></script>
-    <button onclick="iterations+=1;recompile();">Iterate</button>
-    <canvas id="canvas"></canvas>
-    <h3>Algorithms:</h3>
-    <ul>
-      <li>n: convergence of Newton's method</li>
-      <li>h: convergence of Halley's method</li>
-      <li>l: convergence of Laguerre's method (does not work)</li>
-      <li>cw: color wheel</li>
-      <li>ni: iterations of Newton's method</li>
-      <li>hi: iterations of Halley's method</li>
-      <li>li: iterations of Laguerre's method (does not work)</li>
-    </ul>
+    <div style="display:flex">
+      <canvas id="canvas" style="margin:20px"></canvas>
+      <div style="display:block">
+        <h3>Algorithms:</h3>
+        <ul>
+          <li><button id="algn">n</button> convergence of Newton's method</li>
+          <li><button id="algh">h</button> convergence of Halley's method</li>
+          <li><button id="algl">l</button> convergence of Laguerre's method (does not work)</li>
+          <li><button id="algs">s</button> convergence of the secant method</li>
+          <li><button id="algcw">cw</button> color wheel</li>
+          <li><button id="algni">ni</button> iterations of Newton's method</li>
+          <li><button id="alghi">hi</button> iterations of Halley's method</li>
+          <li><button id="algli">li</button> iterations of Laguerre's method (does not work)</li>
+          <li><button id="algsi">si</button> iterations of the secant method</li>
+        </ul>
+        <div id="options" style="margin-bottom:20px">
+          <div id="options-conv" style="display:block">
+            <h4 style="margin-bottom:5px">Options:</h4>
+            <button onclick="seedval=Math.random();recompile();">New colors</button>
+          </div>
+          <div id="options-conv2" style="display:none">
+            <h4 style="margin-bottom:5px">Options:</h4>
+            <button onclick="seedval=Math.random();recompile();" style="margin-bottom:10px">New colors</button>
+            <br/>
+            <span>Start: </span>
+            <input id="start" type="text" value="1 0"></input>
+          </div>
+          <div id="options-cw" style="display:none">
+          </div>
+          <div id="options-iter" style="display:none">
+            <h4 style="margin-bottom:5px">Options:</h4>
+            <button onclick="iterations+=1;recompile();" style="margin:2px;margin-right:0px">+1</button>
+            <button onclick="iterations-=1;recompile();" style="margin:2px;margin-right:0px">-1</button>
+            <button onclick="iterations=0;recompile();" style="margin:2px;margin-right:0px">Reset</button>
+            <br/>
+            <button onclick="algorithm=algorithm.substring(0,1)+'i';recompile()" style="margin:2px;margin-right:0px">i</button>
+            <button onclick="algorithm=algorithm.substring(0,1)+'d1';recompile()" style="margin:2px;margin-right:0px">d1</button>
+            <button onclick="algorithm=algorithm.substring(0,1)+'d2';recompile()" style="margin:2px;margin-right:0px">d2</button>
+            <button onclick="algorithm=algorithm.substring(0,1)+'dc';recompile()" style="margin:2px;margin-right:0px">dc</button>
+          </div>
+          <div id="options-iter2" style="display:none">
+            <h4 style="margin-bottom:5px">Options:</h4>
+            <button onclick="iterations+=1;recompile();" style="margin:2px;margin-right:0px">+1</button>
+            <button onclick="iterations-=1;recompile();" style="margin:2px;margin-right:0px">-1</button>
+            <button onclick="iterations=0;recompile();" style="margin:2px;margin-right:0px">Reset</button>
+            <br/>
+            <button onclick="algorithm=algorithm.substring(0,1)+'i';recompile()" style="margin:2px;margin-right:0px">i</button>
+            <button onclick="algorithm=algorithm.substring(0,1)+'d1';recompile()" style="margin:2px;margin-right:0px">d1</button>
+            <button onclick="algorithm=algorithm.substring(0,1)+'d2';recompile()" style="margin:2px;margin-right:0px">d2</button>
+            <button onclick="algorithm=algorithm.substring(0,1)+'dc';recompile()" style="margin:2px;margin-right:0px">dc</button>
+            <br style="margin-bottom:8px"/>
+            <span>Start: </span>
+            <input id="start" type="text" value="1 0"></input>
+          </div>
+        </div>
+        <button onclick="scale=2;centerx=centery=0;redraw(centerx,centery,scale);" style="margin-top:10px;margin-bottom:10px">Reset zoom</button>
+        <div style="display:block;margin-top:20px">
+          <h4 style="margin:0px">Coefficients:</h4>
+          <input id="realc" type="text" style="margin-top:10px" value="1 0 0 -1"></input>
+          <br/>
+          <input id="imagc" type="text" style="margin-top:10px" value="0 0 0 0"></input>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
