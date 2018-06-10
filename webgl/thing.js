@@ -4,7 +4,7 @@ seedval = Math.random();
 centerx = 0;
 centery = 0;
 // algorithm = prompt('Algorithm:')
-algorithm = 'n'
+algorithm = 'w'
 numerical = false;
 // numerical = prompt('Numerical?:') == 'y';
 iterations = 0;
@@ -13,103 +13,32 @@ requation = [1,0,0,-1];
 iequation = [0,0,0,0];
 start = [1,0];
 pi_s = '3.1415926535897932384626433832795'
+max_iterations = 256;
+tolerance = '1e-10';
 
 window.onload = function () {
     const options_conv = document.getElementById('options-conv');
-    const options_conv2 = document.getElementById('options-conv2');
     const options_cw = document.getElementById('options-cw');
     const options_iter = document.getElementById('options-iter');
-    const options_iter2 = document.getElementById('options-iter2');
+    const options = (s) => ({c:options_conv, i:options_iter}[s])||options_cw;
+    var copt = options_conv;
 
-    const algn = document.getElementById('algn');
-    algn.onclick = function () {
-        options_conv.style.display = 'block';
-        options_conv2.style.display = 'none';
-        options_cw.style.display = 'none';
-        options_iter.style.display = 'none';
-        options_iter2.style.display = 'none';
-        algorithm = 'n';
-        recompile();
-    }
-    const algh = document.getElementById('algh');
-    algh.onclick = function () {
-        options_conv.style.display = 'block';
-        options_conv2.style.display = 'none';
-        options_cw.style.display = 'none';
-        options_iter.style.display = 'none';
-        options_iter2.style.display = 'none';
-        algorithm = 'h';
-        recompile();
-    }
-    const algl = document.getElementById('algl');
-    algl.onclick = function () {
-        options_conv.style.display = 'block';
-        options_conv2.style.display = 'none';
-        options_cw.style.display = 'none';
-        options_iter.style.display = 'none';
-        options_iter2.style.display = 'none';
-        algorithm = 'l';
-        recompile();
-    }
-    const algs = document.getElementById('algs');
-    algs.onclick = function () {
-        options_conv.style.display = 'none';
-        options_conv2.style.display = 'block';
-        options_cw.style.display = 'none';
-        options_iter.style.display = 'none';
-        options_iter2.style.display = 'none';
-        algorithm = 's';
-        recompile();
-    }
-    const algcw = document.getElementById('algcw');
-    algcw.onclick = function () {
-        options_conv.style.display = 'none';
-        options_conv2.style.display = 'none';
-        options_cw.style.display = 'block';
-        options_iter.style.display = 'none';
-        options_iter2.style.display = 'none';
-        algorithm = 'cw';
-        recompile();
-    }
-    const algni = document.getElementById('algni');
-    algni.onclick = function () {
-        options_conv.style.display = 'none';
-        options_conv2.style.display = 'none';
-        options_cw.style.display = 'none';
-        options_iter.style.display = 'block';
-        options_iter2.style.display = 'none';
-        algorithm = 'ni';
-        recompile();
-    }
-    const alghi = document.getElementById('alghi');
-    alghi.onclick = function () {
-        options_conv.style.display = 'none';
-        options_conv2.style.display = 'none';
-        options_cw.style.display = 'none';
-        options_iter.style.display = 'block';
-        options_iter2.style.display = 'none';
-        algorithm = 'hi';
-        recompile();
-    }
-    const algli = document.getElementById('algli');
-    algli.onclick = function () {
-        options_conv.style.display = 'none';
-        options_conv2.style.display = 'none';
-        options_cw.style.display = 'none';
-        options_iter.style.display = 'block';
-        options_iter2.style.display = 'none';
-        algorithm = 'li';
-        recompile();
-    }
-    const algsi = document.getElementById('algsi');
-    algsi.onclick = function () {
-        options_conv.style.display = 'none';
-        options_conv2.style.display = 'none';
-        options_cw.style.display = 'none';
-        options_iter.style.display = 'none';
-        options_iter2.style.display = 'block';
-        algorithm = 'si';
-        recompile();
+    const sdiv = document.getElementById('sdiv');
+
+    const alg = ['nc','hc','lc','sc','ni','hi','li','si','w'];
+
+    for (let a of alg) {
+        let button = document.getElementById('alg' + a);
+        button.onclick = function () {
+            copt.style.display = 'none';
+            copt = options(a.substring(1));
+            copt.style.display = 'block';
+
+            sdiv.style.display = a[0]=='s' ? 'block' : 'none';
+
+            algorithm = a;
+            recompile();
+        }
     }
 
     const canvas = document.getElementById('canvas');
@@ -147,17 +76,10 @@ window.onload = function () {
         }
         recompile();
     }
-    const startf = document.getElementById('start');
-    const startf2 = document.getElementById('start2');
-    startf.onchange = function () {
-        start = startf.value.split(' ');
+    const startval = document.getElementById('startval');
+    startval.onchange = function () {
+        start = startval.value.split(' ');
         recompile();
-        startf2.value = startf.value;
-    }
-    startf2.onchange = function () {
-        start = startf2.value.split(' ');
-        recompile();
-        startf.value = startf2.value;
     }
     canvas.addEventListener('click', function (e) {
         var rect = canvas.getBoundingClientRect();
@@ -184,7 +106,7 @@ void main(void) {
 `);
     const fragment = compile(ctx, ctx.FRAGMENT_SHADER, `
 #define count ${requation.length}
-#define MAX_ITER 256
+#define MAX_ITER ${max_iterations}
 
 precision highp float;
 
@@ -206,42 +128,31 @@ vec2 complex_sqrt(vec2 a)
   return vec2(sqrt(0.5 * (ab + a.x)), (a.y < 0.0 ? -1.0 : 1.0) * sqrt(0.5 * (ab - a.x)));
 }
 
-vec2 poly(vec2 x) {` + (numerical ? `
-    return exp(x.x)*vec2(cos(x.y),sin(x.y)) - coefs[count-1];
-` : `
+vec2 poly(vec2 x) {
     vec2 result = coefs[0];
     for (int c = 1; c < count; c++) {
         result = complex_mul(result, x);
         result += coefs[c];
     }
     return result;
-`) + `
 }
 
-vec2 diff(vec2 x) {` + (numerical ? `
-    float epsilon = 1e-1*(0.1+sqrt(dot(x,x)));
-    return (poly(x + vec2(epsilon, 0.0)) - poly(x - vec2(epsilon, 0.0))) / (2.0 * epsilon);
-` : `
+vec2 diff(vec2 x) {
     vec2 result = coefs[0] * float(count - 1);
     for (int c = 1; c < count - 1; c++) {
         result = complex_mul(result, x);
         result += float(count - c - 1) * coefs[c];
     }
     return result;
-`) + `
 }
 
-vec2 diff2(vec2 x) {` + (numerical ? `
-    float epsilon = 1e-2;
-    return (poly(x - vec2(epsilon, 0.0)) - 2.0 * poly(x) + poly(x + vec2(epsilon, 0.0))) / (epsilon * epsilon);
-` : `
+vec2 diff2(vec2 x) {
     vec2 result = coefs[0] * float(count - 1) * float(count - 2);
     for (int c = 1; c < count - 2; c++) {
         result = complex_mul(result, x);
         result += float(count - c - 1) * float(count - c - 2) * coefs[c];
     }
     return result;
-`) + `
 }
 
 float shade(float x) {
@@ -274,170 +185,61 @@ else              r = vec3(c,0.0,x);
     float m = l - 0.5*c;
     return vec4(r+vec3(m,m,m),1.0);
 }
-
-void main(void) {
-` + ((algorithm == 'n') ? `
-    vec2 zp = num + vec2(0.0, 2.0);
-    vec2 z = num;
-    int itr = MAX_ITER;
-    for (int c = 0; c < MAX_ITER; c++) {
-        if (dot(z - zp, z - zp) < 1e-10)
-            break;
-        itr--;
-        vec2 dz = complex_div(poly(z), diff(z));
-        zp = z;
-        z -= dz;
-    }
-    gl_FragColor = vec4(hash(z) * shade(float(itr) / float(MAX_ITER)) * (itr == 0 ? 0.0 : 1.0), 1.0);
-}
-` : (algorithm == 's') ? `
+` + (((calc_dz)=>calc_dz&&{
+    c:`
+void main()
+{
     vec2 zp = num + vec2(${start[0]}, ${start[1]});
     vec2 z = num;
     int itr = MAX_ITER;
     for (int c = 0; c < MAX_ITER; c++) {
-        if (dot(z - zp, z - zp) < 1e-10)
+        if (dot(z - zp, z - zp) < ${tolerance})
             break;
         itr--;
-        vec2 dz = complex_div(complex_mul((z - zp), poly(z)), poly(z) - poly(zp));
+        ${calc_dz}
         zp = z;
         z -= dz;
     }
     gl_FragColor = vec4(hash(z) * shade(float(itr) / float(MAX_ITER)) * (itr == 0 ? 0.0 : 1.0), 1.0);
 }
-` : (algorithm == 'h') ? `
-    vec2 zp = num + vec2(0.0, 2.0);
-    vec2 z = num;
-    int itr = MAX_ITER;
-    for (int c = 0; c < MAX_ITER; c++) {
-        if (dot(z - zp, z - zp) < 1e-10)
-            break;
-        itr--;
-        vec2 f = poly(z);
-        vec2 fp = diff(z);
-        vec2 fpp = 0.5*diff2(z);
-        vec2 d = complex_mul(fp, fp) - complex_mul(f, fpp);
-        vec2 dz = complex_div(complex_mul(f, fp), d);
-
-        zp = z;
-        z -= dz;
-    }
-    gl_FragColor = vec4(hash(z) * shade(float(itr) / float(MAX_ITER)) * (itr == 0 ? 0.0 : 1.0), 1.0);
-}
-` : (algorithm == 'l') ? ` // FIX!
-    vec2 zp = num + vec2(0.0, 2.0);
-    vec2 z = num;
-    int itr = MAX_ITER;
-    for (int c = 0; c < MAX_ITER; c++) {
-        if (dot(z - zp, z - zp) < 1e-2/sqrt(float(itr)))
-            break;
-        itr--;
-        vec2 f = poly(z);
-        vec2 fp = diff(z);
-        vec2 fpp = diff2(z);
-
-        vec2 g = complex_div(fp, f);
-        vec2 h = complex_div(fpp, f);
-        vec2 q = complex_sqrt(float(count - 2) * (float(count - 2) * (complex_mul(g, g) - h) - h));
-        vec2 d1 = g + q;
-        vec2 d2 = g - q;
-        vec2 d = dot(d1, d1) > dot(d2, d2) ? d1 : d2;
-        vec2 dz = complex_div(vec2(count - 1, 0.0), d);
-
-        zp = z;
-        z -= dz;
-    }
-    gl_FragColor = vec4(hash(z) * shade(float(itr) / float(MAX_ITER)) * (itr == 0 ? 0.0 : 1.0), 1.0);
-}
-` : (algorithm == 'cw') ? `
-gl_FragColor = cw(poly(num));
-}
-` : (algorithm == 'ni') ? `
-    vec2 z = num;
-    for (int c = 0; c < ${iterations}; c++) {
-        vec2 dz = complex_div(poly(z), diff(z));
-        z -= dz;
-    }
-    gl_FragColor = cw(z);
-}
-` : (algorithm == 'hi') ? `
-    vec2 z = num;
-    for (int c = 0; c < ${iterations}; c++) {
-        vec2 f = poly(z);
-        vec2 fp = diff(z);
-        vec2 fpp = 0.5*diff2(z);
-        vec2 d = complex_mul(fp, fp) - complex_mul(f, fpp);
-        vec2 dz = complex_div(complex_mul(f, fp), d);
-        z -= dz;
-    }
-    gl_FragColor = cw(z);
-}
-` : (algorithm == 'li') ? ` // FIX!
-    vec2 z = num;
-    for (int c = 0; c < ${iterations}; c++) {
-        vec2 f = poly(z);
-        vec2 fp = diff(z);
-        vec2 fpp = diff2(z);
-
-        vec2 g = complex_div(fp, f);
-        vec2 h = complex_div(fpp, f);
-        vec2 q = complex_sqrt(float(count - 2) * (float(count - 2) * (complex_mul(g, g) - h) - h));
-        vec2 d1 = g + q;
-        vec2 d2 = g - q;
-        vec2 d = dot(d1, d1) > dot(d2, d2) ? d1 : d2;
-        vec2 dz = complex_div(vec2(count - 1, 0.0), d);
-        z -= dz;
-    }
-    gl_FragColor = cw(z);
-}
-` : (algorithm == 'si') ? `
+`,
+    i:`
+void main()
+{
     vec2 zp = num + vec2(${start[0]}, ${start[1]});
     vec2 z = num;
     for (int c = 0; c < ${iterations}; c++) {
-        if (dot(z - zp, z - zp) < 1e-10)
+        if (dot(z - zp, z - zp) < ${tolerance})
             break;
-        vec2 dz = complex_div(complex_mul((z - zp), poly(z)), poly(z) - poly(zp));
+        ${calc_dz}
         zp = z;
         z -= dz;
     }
     gl_FragColor = cw(z);
 }
-` : (algorithm[1] == 'd') ? `
+`,
+    d1:`
+void main()
+{
+    vec2 zp = num + vec2(${start[0]}, ${start[1]});
+    vec2 z = num;
+    for (int c = 0; c < ${iterations}+1; c++) {
+        ${calc_dz}
+        gl_FragColor = vec4(0.5*length(dz)*vec3(1.0,1.0,1.0),1.0);
+        // gl_FragColor = vec4((-log(length(dz)))*vec3(1.0,1.0,1.0),1.0);
+        zp = z;
+        z -= dz;
+    }
+}
+`,
+    d2:`
+void main()
+{
     gl_FragColor = vec4(1.0,1.0,1.0,1.0);
     vec2 zp = num + vec2(${start[0]}, ${start[1]});
     vec2 z = num;
     for (int c = 0; c < ${iterations}+1; c++) {
-` +((algorithm[0] == 'n') ? `
-        vec2 dz = complex_div(poly(z), diff(z));
-` : (algorithm[0] == 'h') ? `
-        vec2 f = poly(z);
-        vec2 fp = diff(z);
-        vec2 fpp = 0.5*diff2(z);
-        vec2 d = complex_mul(fp, fp) - complex_mul(f, fpp);
-        vec2 dz = complex_div(complex_mul(f, fp), d);
-` : (algorithm[0] == 'l') ? `
-        vec2 f = poly(z);
-        vec2 fp = diff(z);
-        vec2 fpp = diff2(z);
-
-        vec2 g = complex_div(fp, f);
-        vec2 h = complex_div(fpp, f);
-        vec2 q = complex_sqrt(float(count - 2) * (float(count - 2) * (complex_mul(g, g) - h) - h));
-        vec2 d1 = g + q;
-        vec2 d2 = g - q;
-        vec2 d = dot(d1, d1) > dot(d2, d2) ? d1 : d2;
-        vec2 dz = complex_div(vec2(count - 1, 0.0), d);
-` : (algorithm[0] == 's') ? `
-        if (dot(z - zp, z - zp) < 1e-10)
-            break;
-        vec2 dz = complex_div(complex_mul((z - zp), poly(z)), poly(z) - poly(zp));
-        zp = z;
-`:'')+((algorithm[2] == '1') ? `
-        gl_FragColor = vec4(0.5*length(dz)*vec3(1.0,1.0,1.0),1.0);
-        // gl_FragColor = vec4((-log(length(dz)))*vec3(1.0,1.0,1.0),1.0);
-        z -= dz;
-    }
-}
-` : (algorithm[2] == '2') ? `
+        ${calc_dz}
         if (mod(float(c), 3.0) < 0.9) {
             gl_FragColor.r = 0.5*(gl_FragColor.r + log(length(dz)));
         } else if (mod(float(c), 3.0) < 1.9) {
@@ -445,15 +247,45 @@ gl_FragColor = cw(poly(num));
         } else {
             gl_FragColor.b = 0.5*(gl_FragColor.b + log(length(dz)));
         }
+        zp = z;
         z -= dz;
     }
 }
-` : (algorithm[2] == 'c') ? `
+`,
+    dc:`
+void main()
+{
+    vec2 zp = num + vec2(${start[0]}, ${start[1]});
+    vec2 z = num;
+    for (int c = 0; c < ${iterations}+1; c++) {
+        ${calc_dz}
         gl_FragColor = cw(dz);
+        zp = z;
         z -= dz;
     }
 }
-` : ''): '}'));
+`,
+}[algorithm.substring(1)])({
+    n:'vec2 dz = complex_div(poly(z), diff(z));',
+    s:'vec2 dz = complex_div(complex_mul((z - zp), poly(z)), poly(z) - poly(zp));',
+    h:`vec2 f = poly(z);
+       vec2 fp = diff(z);
+       vec2 d = complex_mul(fp, fp) - complex_mul(f, 0.5*diff2(z));
+       vec2 dz = complex_div(complex_mul(f, fp), d);`,
+    l:`vec2 f = poly(z);
+       vec2 g = complex_div(diff(z), f);
+       vec2 h = complex_div(diff2(z), f);
+       vec2 q = complex_sqrt(float(count - 2) * (float(count - 2) * (complex_mul(g, g) - h) - h));
+       vec2 d1 = g + q;
+       vec2 d2 = g - q;
+       vec2 d = dot(d1, d1) > dot(d2, d2) ? d1 : d2;
+       vec2 dz = complex_div(vec2(count - 1, 0.0), d);`,
+}[algorithm[0]])||`
+void main()
+{
+    gl_FragColor = cw(poly(num));
+}
+`))
 
     program = ctx.createProgram();
     ctx.attachShader(program, vertex);
