@@ -148,9 +148,16 @@ window.onload = function () {
         recompile();
     }
     const startf = document.getElementById('start');
+    const startf2 = document.getElementById('start2');
     startf.onchange = function () {
         start = startf.value.split(' ');
         recompile();
+        startf2.value = startf.value;
+    }
+    startf2.onchange = function () {
+        start = startf2.value.split(' ');
+        recompile();
+        startf.value = startf2.value;
     }
     canvas.addEventListener('click', function (e) {
         var rect = canvas.getBoundingClientRect();
