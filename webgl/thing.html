@@ -32,6 +32,7 @@
           <div id="options-iter" style="display:none">
             <h4 style="margin-bottom:5px">Options:</h4>
             <button onclick="iterations+=1;recompile();" style="margin:2px;margin-right:0px">+1</button>
+            <button onclick="iterations+=100;recompile();" style="margin:2px;margin-right:0px">+100</button>
             <button onclick="iterations-=1;recompile();" style="margin:2px;margin-right:0px">-1</button>
             <button onclick="iterations=0;recompile();" style="margin:2px;margin-right:0px">Reset</button>
             <br/>
@@ -45,6 +46,8 @@
             <input id="startval" type="text" value="1 0"></input>
           </div>
         </div>
+        <p id="range">Range: 2</p>
+        <p id="center">Center: 0 0</p>
         <button onclick="scale=2;centerx=centery=0;redraw(centerx,centery,scale);" style="margin-top:10px;margin-bottom:10px">Reset zoom</button>
         <div style="display:block;margin-top:20px">
           <h4 style="margin:0px">Coefficients:</h4>

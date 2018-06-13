@@ -81,6 +81,8 @@ window.onload = function () {
         start = startval.value.split(' ');
         recompile();
     }
+    const range = document.getElementById('range');
+    const center = document.getElementById('center');
     canvas.addEventListener('click', function (e) {
         var rect = canvas.getBoundingClientRect();
         centerx += (e.clientX - rect.left - size / 2) / (size / 2) * scale;
@@ -267,7 +269,6 @@ void main()
 `,
 }[algorithm.substring(1)])({
     n:'vec2 dz = complex_div(poly(z), diff(z));',
-    s:'vec2 dz = complex_div(complex_mul((z - zp), poly(z)), poly(z) - poly(zp));',
     h:`vec2 f = poly(z);
        vec2 fp = diff(z);
        vec2 d = complex_mul(fp, fp) - complex_mul(f, 0.5*diff2(z));
@@ -280,6 +281,7 @@ void main()
        vec2 d2 = g - q;
        vec2 d = dot(d1, d1) > dot(d2, d2) ? d1 : d2;
        vec2 dz = complex_div(vec2(count - 1, 0.0), d);`,
+    s:'vec2 dz = complex_div(complex_mul((z - zp), poly(z)), poly(z) - poly(zp));',
 }[algorithm[0]])||`
 void main()
 {
@@ -309,6 +311,8 @@ void main()
 }
 
 function redraw(cx, cy, scale) {
+    range.innerHTML = `Range: ${scale}`;
+    center.innerHTML = `Center: ${cx} ${cy}`;
     ctx.clearColor(0.0, 0.0, 0.0, 1.0);
     ctx.clear(ctx.COLOR_BUFFER_BIT | ctx.DEPTH_BUFFER_BIT);
 
