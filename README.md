@@ -67,3 +67,11 @@ Requires stack and HIP to build (`make winding`).
 
 Checkout the python branch (very slow).
 
+## Rust fractal-image
+`cargo run -- <image width> <image height> <real offset> <imaginary offset> <radius> <frames> <iterations> <tolerance> <supersampling> <algorithm> <shading> <coefficients>`
+
+Algorithms: n h l s
+
+Shading: c i
+
+Real and imaginary parts must be provided for each coefficient
