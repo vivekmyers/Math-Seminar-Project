@@ -9,3 +9,6 @@ gpu/x64
 output.bmp
 winding.png
 boxes.js
+Cargo.lock
+fractal-image/target
+fractal-image/images
