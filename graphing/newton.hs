@@ -34,7 +34,7 @@ poly (r:rs:rss) x = poly ((r * x + rs):rss) x
 shade = PixelRGB
 
 tangent :: [D] -> D -> (D, D) -> Bool
-tangent f x (t, y) = abs ((dif f x * (t - x) + poly f x) - y) < (dif f x + 1) * 0.01 || abs (t - (x)) < 0.01
+tangent f x (t, y) = abs ((dif f x * (t - x) + poly f x) - y) < (abs (dif f x) + 1) * 0.01 || abs (t - (x)) < 0.005
 
 type D = Double
 
