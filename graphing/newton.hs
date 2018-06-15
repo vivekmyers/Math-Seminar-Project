@@ -34,16 +34,16 @@ poly (r:rs:rss) x = poly ((r * x + rs):rss) x
 shade = PixelRGB
 
 tangent :: [D] -> D -> (D, D) -> Bool
-tangent f x (t, y) = abs ((dif f x * (t - x) + poly f x) - y) < (dif f x + 1) * 0.01 || abs (t - (x)) < 0.001
+tangent f x (t, y) = abs ((dif f x * (t - x) + poly f x) - y) < (dif f x + 1) * 0.01 || abs (t - (x)) < 0.01
 
 type D = Double
+
 solve :: [D] -> D -> [D] -> (D, D, D, D) -> (Int, Int) -> Pixel RGB Double
-solve samples res f (cx, cy, wx, wy) (j, i) = let (x, y) = (cx + (fromIntegral i / res - 0.5) * wx,
-                                                    cy + (fromIntegral (-j) / res + 0.5) * wy) 
-                                      in if not $ abs (poly f x - y) < 0.01 * (abs (dif f x) + 1) 
-                                         then if or $ tangent f <$> samples <*> pure (x, y)
-                                              then shade 0.2 0.2 0.4
-                                              else if abs x < 0.001 || abs y < 0.001
-                                                   then shade 0.6 0.2 0.2
-                                                   else shade 0.8 0.8 0.8
-                                         else shade 0.2 0.2 0.8
+solve samples res f (cx, cy, wx, wy) (j, i)
+  | abs x < 0.001 || abs y < 0.001 = shade 0.6 0.2 0.2
+  | or $ tangent f <$> samples <*> pure (x, y) = shade 0.2 0.2 0.4
+  | abs (poly f x - y) < 0.01 * (abs (dif f x) + 1) = shade 0.2 0.2 0.8
+  | otherwise = shade 0.8 0.8 0.8
+  where (x, y) = (cx + (fromIntegral i / res - 0.5) * wx,
+                  cy + (fromIntegral (-j) / res + 0.5) * wy) 
+                                      
