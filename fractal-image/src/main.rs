@@ -6,7 +6,7 @@ extern crate time;
 use num::Complex;
 use num::Zero;
 use itertools::Itertools;
-use std::sync::{Arc, Mutex};
+use std::sync::Mutex;
 use std::str::FromStr;
 
 #[derive(Clone, Copy)]
@@ -79,7 +79,7 @@ fn main() {
     let remaining_args: Vec<String> = args.collect();
     let coefficients: Vec<Complex<f64>> = remaining_args.chunks(2).map(|s| Complex::new(s[0].parse().unwrap(),s[1].parse().unwrap())).collect();
 
-    let num_threads = 64;
+    let num_threads = 32;
     let chunk_size = ((image_width * image_height - 1) / (num_threads - 1)) as usize;
     let mut pool = scoped_threadpool::Pool::new(num_threads);
 
@@ -87,7 +87,7 @@ fn main() {
         println!("Beginning frame {}", i);
         let frame_start = time::PreciseTime::now();
         let radius = initial_radius / (0.1 * i as f64).exp2();
-        let image_data = Arc::new(Mutex::new(vec![0u8; (image_width * image_height) as usize * 3]));
+        let image_data = Mutex::new(vec![0u8; (image_width * image_height) as usize * 3]);
 
         let chunks = (0..image_width).cartesian_product(0..image_height).chunks(chunk_size);
 
@@ -95,7 +95,7 @@ fn main() {
         pool.scoped(|scope| {
             for c in &chunks {
                 let points = c.collect::<Vec<_>>();
-                let image_ref = Arc::clone(&image_data);
+                let image_ref = &image_data;
                 let c = &coefficients;
                 use ShadingAlgorithm::*;
                 match shading_algorithm {
@@ -140,7 +140,7 @@ fn main() {
                                         zp = z;
                                         z -= dz;
                                         if dz.norm_sqr() < tolerance {
-                                            sample_color = shade(color_wheel_flat(z), j, 0.0, supersampling);
+                                            sample_color = shade(color_wheel_flat(z), j, 0.3, supersampling);
                                             break;
                                         }
                                     }
@@ -204,6 +204,59 @@ fn main() {
                             for k in 0..3 { image[pos+k] = (255.9*color[k]) as u8; }
                         }
                     }),
+                    Difference => scope.execute(move || {
+                        for (x, y) in points.iter() {
+                            let mut color = [0.0, 0.0, 0.0];
+                            for si in 0..supersampling {
+                                for sj in 0..supersampling {
+                                    let mut z = Complex::new(
+                                        ((*x as f64 + si as f64 / supersampling as f64) / (image_width as f64) * 2.0 - 1.0) * radius + center_x,
+                                        ((*y as f64 + sj as f64 / supersampling as f64) / (image_height as f64) * 2.0 - 1.0) * radius + center_y
+                                    );
+                                    let mut zp = zp_start + if zp_start_relative { z } else { Complex::zero() };
+                                    let mut dz = Complex::zero();
+                                    for _ in 0..iterations {
+                                        use Algorithm::*;
+                                        dz = match algorithm {
+                                            Newton => {
+                                                eval(c, 0, z) / eval(c, 1, z)
+                                            },
+                                            Halley => {
+                                                let f = eval(c, 0, z);
+                                                let fp = eval(c, 1, z);
+                                                f * fp / (fp * fp - 0.5 * f * eval(c, 2, z))
+                                            },
+                                            Laguerre => {
+                                                let f = eval(c, 0, z);
+                                                let g = eval(c, 1, z) / f;
+                                                let h = eval(c, 2, z) / f;
+                                                let deg = c.len() as f64 - 1.0;
+                                                let q = ((deg - 1.0) * ((deg - 1.0) * (g * g - h) - h)).sqrt();
+                                                let d1 = g + q;
+                                                let d2 = g - q;
+                                                Complex::new(deg, 0.0) / if d1.norm_sqr() > d2.norm_sqr() { d1 } else { d2 }
+                                            },
+                                            Secant => {
+                                                let f = eval(c, 0, z);
+                                                let fp = eval(c, 0, zp);
+                                                (z - zp) * f / (f - fp)
+                                            },
+                                        };
+                                        zp = z;
+                                        z -= dz;
+                                        if dz.norm_sqr() < tolerance {
+                                            break;
+                                        }
+                                    }
+                                    let sample_color = shade_norm(color_wheel_flat(dz), dz.norm(), supersampling);
+                                    for k in 0..3 {color[k] += sample_color[k]; }
+                                }
+                            }
+                            let mut image = image_ref.lock().unwrap();
+                            let pos = (y * image_width + x) as usize * 3;
+                            for k in 0..3 { image[pos+k] = (255.9*color[k]) as u8; }
+                        }
+                    }),
                     _ => panic!()
                 }
             }
@@ -212,7 +265,7 @@ fn main() {
             println!("Created threads ({:.3}s)", create_time.num_milliseconds() as f64 * 0.001);
         });
 
-        let data: Vec<u8> = Arc::try_unwrap(image_data).unwrap().into_inner().unwrap();
+        let data: Vec<u8> = image_data.into_inner().unwrap();
         let render_finished = time::PreciseTime::now();
         let render_time = frame_start.to(render_finished);
         println!("Rendering finished (total {:.3}s)", render_time.num_milliseconds() as f64 * 0.001);
@@ -245,7 +298,7 @@ fn eval(coefficients: &[Complex<f64>], diff_times: usize, z: Complex<f64>) -> Co
 
 fn shade([r, g, b]: [f64; 3], iterations: usize, min: f64, ss: usize) -> [f64; 3] {
     let n = if iterations <= 3 { 2 } else { iterations - 2 };
-    let scale = (min + (0.4-min)/(n as f64).powf(0.3) + 0.6*(-0.005*((n*n) as f64)).exp()) / (ss*ss) as f64;
+    let scale = (min + (0.4-min)/(n as f64).powf(0.1) + 0.6*(-0.01*((n*n) as f64)).exp()) / (ss*ss) as f64;
     [r * scale, g * scale, b * scale]
 }
 

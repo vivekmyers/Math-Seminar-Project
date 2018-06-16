@@ -25,7 +25,7 @@ window.onload = function () {
 
     const sdiv = document.getElementById('sdiv');
 
-    const alg = ['nc','hc','lc','sc','ni','hi','li','si','w'];
+    const alg = ['nc','hc','lc','sc','cc','ni','hi','li','si','ci','w'];
 
     for (let a of alg) {
         let button = document.getElementById('alg' + a);
@@ -282,6 +282,9 @@ void main()
        vec2 d = dot(d1, d1) > dot(d2, d2) ? d1 : d2;
        vec2 dz = complex_div(vec2(count - 1, 0.0), d);`,
     s:'vec2 dz = complex_div(complex_mul((z - zp), poly(z)), poly(z) - poly(zp));',
+    c:`vec2 fp = diff(z);
+       vec2 s = complex_div(poly(z), fp);
+       vec2 dz = s + complex_mul(complex_mul(s, s), 0.5*complex_div(diff2(z), fp));`,
 }[algorithm[0]])||`
 void main()
 {
